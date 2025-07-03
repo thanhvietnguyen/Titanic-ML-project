@@ -18,8 +18,15 @@ app = FastAPI()
 
 # Load mô hình
 mLink = 'https://github.com/thanhvietnguyen/Titanic-ML-project/blob/master/models/best_model.pkl?raw=true'
-mfile = BytesIO(requests.get(mLink).content)
-model = joblib.load(mfile)
+try:
+    print("Đang tải mô hình từ GitHub...")
+    response = requests.get(mLink)
+    response.raise_for_status()  # Gây lỗi nếu không 200
+    mfile = BytesIO(response.content)
+    model = joblib.load(mfile)
+    print("Mô hình đã tải thành công.")
+except Exception as e:
+    print("Lỗi khi tải mô hình:", str(e))
 
 class Passenger(BaseModel):
     Pclass: int
