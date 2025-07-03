@@ -7,7 +7,7 @@ Original file is located at
     https://colab.research.google.com/github/thanhvietnguyen/Titanic-ML-project/blob/master/app/ui/titanic-streamlit.ipynb
 """
 
-pip install streamlit
+#pip install streamlit
 
 import streamlit as st
 import requests
