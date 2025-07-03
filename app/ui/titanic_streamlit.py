@@ -40,6 +40,15 @@ if st.button("Dự đoán"):
         response = requests.post("https://titanic-fastapi.onrender.com/predict", json=input_data)
         result = response.json()
 
+        st.write("Status code:", response.status_code)
+        st.write("Raw response:", response.text)
+
+        if response.status_code == 200:
+            result = response.json()
+            st.success(f"Dự đoán: {result['prediction']}")
+        else:
+            st.error("API lỗi hoặc không phản hồi đúng định dạng JSON.")
+
         if result["prediction"] == 1:
             st.success(f"Hành khách **có khả năng sống sót**, xác suất: {result['probability_survival']:.2%}")
         else:
