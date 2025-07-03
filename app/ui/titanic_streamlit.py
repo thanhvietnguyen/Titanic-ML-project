@@ -37,7 +37,7 @@ if st.button("Dự đoán"):
     }
 
     try:
-        response = requests.post("https://titanic-fastapi.onrender.com", json=input_data)
+        response = requests.post("https://titanic-fastapi.onrender.com/predict", json=input_data)
         result = response.json()
 
         if result["prediction"] == 1:
