@@ -17,7 +17,7 @@ import requests
 app = FastAPI()
 
 # Load mô hình
-mLink = 'https://github.com/thanhvietnguyen/Titanic-ML-project/blob/main/models/best_model.pkl?raw=true'
+mLink = 'https://github.com/thanhvietnguyen/Titanic-ML-project/blob/master/models/best_model.pkl?raw=true'
 mfile = BytesIO(requests.get(mLink).content)
 model = joblib.load(mfile)
 
