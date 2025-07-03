@@ -12,8 +12,10 @@ Original file is located at
 import streamlit as st
 import requests
 
-st.title("Titanic Survival Prediction")
+st.title("Dự đoán sống sót Titanic")
 st.write("Nhập thông tin hành khách và nhận dự đoán liệu họ có sống sót hay không.")
+
+API_URL = "https://titanic-fastapi.onrender.com/predict"
 
 # ===== Nhập dữ liệu từ người dùng =====
 sex = st.selectbox("Giới tính", ["male", "female"])
@@ -37,22 +39,22 @@ if st.button("Dự đoán"):
     }
 
     try:
-        response = requests.post("https://titanic-fastapi.onrender.com/predict", json=input_data)
-        result = response.json()
+        response = requests.post(API_URL, json=input_data)
 
         st.write("Status code:", response.status_code)
         st.write("Raw response:", response.text)
 
         if response.status_code == 200:
             result = response.json()
-            st.success(f"Dự đoán: {result['prediction']}")
-        else:
-            st.error("API lỗi hoặc không phản hồi đúng định dạng JSON.")
 
-        if result["prediction"] == 1:
-            st.success(f"Hành khách **có khả năng sống sót**, xác suất: {result['probability_survival']:.2%}")
+            if "error" in result:
+                st.error(result["error"])
+            else:
+                label = "Sống sót" if result["prediction"] == 1 else "Không sống sót"
+                st.success(f"Dự đoán: {label}")
+                st.info(f"Xác suất sống: {result['probability_survival'] * 100:.2f}%")
         else:
-            st.error(f"Hành khách **khó sống sót**, xác suất sống: {result['probability_survival']:.2%}")
+            st.error("Lỗi từ API: " + response.text)
 
     except Exception as e:
         st.error(f"Lỗi khi gọi API: {e}")
