@@ -9,6 +9,7 @@ Original file is located at
 
 from fastapi import FastAPI
 from pydantic import BaseModel
+import pandas as pd
 import joblib
 # Using the BytesIO you create a file object out of the response that you get from GitHub
 from io import BytesIO
@@ -43,20 +44,27 @@ def read_root():
 
 @app.post("/predict")
 def predict(passenger: Passenger):
-    family_size = passenger.SibSp + passenger.Parch + 1
-    input_data = [[
-        passenger.Age,
-        passenger.Fare,
-        family_size,
-        passenger.Sex,
-        passenger.Embarked,
-        passenger.Pclass
-    ]]
+  if model is None:
+    return {"Error": "Model chưa được tải thành công"}
 
-    pred = model.predict(input_data)[0]
-    prob = model.predict_proba(input_data)[0][1]
+  try:
+    family_size = passenger.SibSp + passenger.Parch + 1
+    input_df = pd.DataFrame([{
+            "Age": passenger.Age,
+            "Fare": passenger.Fare,
+            "FamilySize": family_size,
+            "Sex": passenger.Sex,
+            "Embarked": passenger.Embarked,
+            "Pclass": passenger.Pclass
+        }])
+    print("Dữ liệu đầu vào:\n", input_df)
+    pred = model.predict(input_df)[0]
+    prob = model.predict_proba(input_df)[0][1]
 
     return {
         "prediction": int(pred),
         "probability_survival": round(prob, 4)
     }
+  except Exception as e:
+        print("Lỗi dự đoán:", str(e))
+        return {"Error": f"Lỗi khi xử lý dự đoán: {str(e)}"}
